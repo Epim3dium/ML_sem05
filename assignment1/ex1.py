@@ -75,6 +75,7 @@ def pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
     plt.plot(rx1path, ry1path, 'o', color='r') 
     plt.plot(rx2path, ry2path, 'o', color='b') 
     plt.plot([rx1, rx2], [ry1, ry2], 'o', color='y') 
+    plt.legend(["r1's cluster", "r2's cluster", "r1's path", "r2's path", "centers of clusters"])
     plt.xlim(-8, 8)
     plt.ylim(-8, 8)
     plt.show()
@@ -114,7 +115,6 @@ def pp7(repeats, n, x, y, alpha, iter_count):
         rx1 = x[index1]
         ry1 = y[index1]
 
-        alpha = 0.1
         index2 = np.random.randint(0, n - 1)
         rx2 = x[index2]
         ry2 = y[index2]
@@ -127,6 +127,7 @@ def pp7(repeats, n, x, y, alpha, iter_count):
         r2path[1].append(ry2)
     plt.plot(r1path[0], r1path[1], 'o', color='r') 
     plt.plot(r2path[0], r2path[1], 'o', color='b') 
+    plt.legend(["all positions of r1", "all positions of r2"])
     plt.xlim(-8, 8)
     plt.ylim(-8, 8)
     plt.show()
@@ -150,6 +151,7 @@ def pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, alpha, iter_count):
     plt.plot(rx1path, ry1path, 'o', color='r') 
     plt.plot(rx2path, ry2path, 'o', color='b') 
     plt.plot([rx1, rx2], [ry1, ry2], 'o', color='y') 
+    plt.legend(["r1's cluster", "r2's cluster", "r1's path", "r2's path", "centers of clusters"])
     plt.xlim(-8, 8)
     plt.ylim(-8, 8)
     plt.show()
@@ -191,6 +193,7 @@ def pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, alpha, iter_count):
     plt.plot( r1B[0] , r1B[1] , 'x', color='r')
     plt.plot( r2A[0] , r2A[1] , 'x', color='y')
     plt.plot( r2B[0] , r2B[1] , 'x', color='c')
+    plt.legend(["point closer to r1 lab 1", "points closer to r1 lab 2", "points closer to r2 lab 1", "points closer to r2 lab 2"])
     plt.xlim(-8, 8)
     plt.ylim(-8, 8)
     plt.show()
@@ -228,6 +231,5 @@ rx2 = x[index2]
 ry2 = y[index2]
 
 # pp1_3(rx1, ry1, rx2, ry2, x, y, 1e-5, 10)
-# pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, 1e-5, 10)
-
-pp7(30, n, x, y, alpha, 50)
+# pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, 0.1, 10)
+pp7(30, n, x, y, alpha, 100)
