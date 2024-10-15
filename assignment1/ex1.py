@@ -45,6 +45,7 @@ def clusterData(rx1, ry1, rx2, ry2, x, y):
             r2cluster[0].append(x[i])
             r2cluster[1].append(y[i])
     return [r1cluster, r2cluster];
+    
 def pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
     rx1path = []
     ry1path = []
@@ -77,36 +78,7 @@ def pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
     plt.xlim(-8, 8)
     plt.ylim(-8, 8)
     plt.show()
-def pp7(rx1, ry1, rx2, ry2, x, y, alpha):
-    rx1path = []
-    ry1path = []
-
-    rx2path = []
-    ry2path = []
-    iter_count = 100
-    for iter in range(iter_count):
-        dx1 = 0
-        dx2 = 0
-        dy1 = 0
-        dy2 = 0
-        for i in range(1000):
-            if distance(x[i], y[i], rx1, ry1) < distance(x[i], y[i], rx2, ry2):
-                dx1 += x[i] - rx1
-                dy1 += y[i] - ry1
-            else: 
-                dx2 += x[i] - rx2
-                dy2 += y[i] - ry2
-        rx1 += alpha / n * dx1
-        ry1 += alpha / n * dy1
-
-        rx2 += alpha / n * dx2
-        ry2 += alpha / n * dy2
-    rx1path.append(rx1)
-    ry1path.append(ry1)
-    rx2path.append(rx2)
-    ry2path.append(ry2)
-
-def pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, alpha, iter_count):
+def secondApproach(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
     rx1path = []
     ry1path = []
 
@@ -133,7 +105,35 @@ def pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, alpha, iter_count):
 
         rx2 += alpha / n * dx2
         ry2 += alpha / n * dy2
+    return [[[rx1, rx2], [ry1, ry2]], [rx1path, ry1path], [rx2path, ry2path]]
+def pp7(repeats, n, x, y, alpha, iter_count):
+    r1path = [[], []]
+    r2path = [[], []]
+    for _ in range(repeats):
+        index1 = np.random.randint(0, n - 1)
+        rx1 = x[index1]
+        ry1 = y[index1]
 
+        alpha = 0.1
+        index2 = np.random.randint(0, n - 1)
+        rx2 = x[index2]
+        ry2 = y[index2]
+        [[[rx1, rx2], [ry1, ry2]], _, _] = secondApproach(rx1, ry1, rx2, ry2, x, y, alpha, iter_count);
+        if distance(3, 3, rx1, ry1) > distance(3, 3, rx2, ry2):
+            rx1, ry1, rx2, ry2 = rx2, ry2, rx1, ry1
+        r1path[0].append(rx1)
+        r1path[1].append(ry1)
+        r2path[0].append(rx2)
+        r2path[1].append(ry2)
+    plt.plot(r1path[0], r1path[1], 'o', color='r') 
+    plt.plot(r2path[0], r2path[1], 'o', color='b') 
+    plt.xlim(-8, 8)
+    plt.ylim(-8, 8)
+    plt.show()
+
+def pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, alpha, iter_count):
+
+    [[[rx1, rx2], [ry1, ry2]], [rx1path, ry1path], [rx2path, ry2path]] = secondApproach(rx1, ry1, rx2, ry2, x, y, alpha, iter_count);
     [r1cluster, r2cluster] = clusterData(rx1, ry1, rx2, ry2, x, y)
     # plt.plot( x , y , 'x' )
     # plt.plot( a[0] , a[1] , 'x', color='g')
@@ -227,5 +227,7 @@ index2 = np.random.randint(0, n - 1)
 rx2 = x[index2]
 ry2 = y[index2]
 
-pp1_3(rx1, ry1, rx2, ry2, x, y, 1e-5, 10)
-pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, 1e-5, 10)
+# pp1_3(rx1, ry1, rx2, ry2, x, y, 1e-5, 10)
+# pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, 1e-5, 10)
+
+pp7(30, n, x, y, alpha, 50)
