@@ -128,10 +128,10 @@ with open('c_points2.txt', 'r') as file:
 x = all[0]
 y = all[1]
 [rx, ry] = merge_until(x, y, 3)
-plt.plot( a[0] , a[1] , 'x', color='r')
+plt.plot( a[0] , a[1] , 'x', color='y')
 plt.plot( b[0] , b[1] , 'x', color='b')
 plt.plot( c[0] , c[1] , 'x', color='g')
-plt.plot( rx , ry , 'o', color='y')
+plt.plot( rx , ry , 'o', color='r')
 plt.xlim(-8, 8)
 plt.ylim(-8, 8)
 plt.show()
