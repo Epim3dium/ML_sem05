@@ -47,18 +47,16 @@ def clusterData(rx1, ry1, rx2, ry2, x, y):
     return [r1cluster, r2cluster];
     
 def pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
+    rx1pathSingleEpoch = []
+    ry1pathSingleEpoch = []
+    rx2pathSingleEpoch = []
+    ry2pathSingleEpoch = []
+
     rx1path = []
     ry1path = []
-
     rx2path = []
     ry2path = []
     for iter in range(iter_count):
-        print(f"before r1: {rx1}, {ry1}");
-        print(f"before r2: {rx2}, {ry2}");
-        rx1path.append(rx1)
-        ry1path.append(ry1)
-        rx2path.append(rx2)
-        ry2path.append(ry2)
         for i in range(1000):
             if distance(x[i], y[i], rx1, ry1) < distance(x[i], y[i], rx2, ry2):
                 rx1 = (1 - alpha) * rx1 + alpha * x[i];
@@ -66,9 +64,15 @@ def pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
             else: 
                 rx2 = (1 - alpha) * rx2 + alpha * x[i];
                 ry2 = (1 - alpha) * ry2 + alpha * y[i];
-        print(f"after r1: {rx1}, {ry1}");
-        print(f"after r2: {rx2}, {ry2}");
-
+            if iter == 0:
+                rx1pathSingleEpoch.append(rx1)
+                ry1pathSingleEpoch.append(ry1)
+                rx2pathSingleEpoch.append(rx2)
+                ry2pathSingleEpoch.append(ry2)
+        rx1path.append(rx1)
+        ry1path.append(ry1)
+        rx2path.append(rx2)
+        ry2path.append(ry2)
     [r1cluster, r2cluster] = clusterData(rx1, ry1, rx2, ry2, x, y)
     plt.plot( r1cluster[0] , r1cluster[1] , 'x', color='g')
     plt.plot( r2cluster[0] , r2cluster[1] , 'x', color='c')
@@ -76,6 +80,18 @@ def pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, iter_count):
     plt.plot(rx2path, ry2path, 'o', color='b') 
     plt.plot([rx1, rx2], [ry1, ry2], 'o', color='y') 
     plt.legend(["r1's cluster", "r2's cluster", "r1's path", "r2's path", "centers of clusters"])
+    plt.xlim(-8, 8)
+    plt.ylim(-8, 8)
+    plt.show()
+
+    for line in plt.gca().lines:
+        line.remove()
+    plt.plot( r1cluster[0] , r1cluster[1] , 'x', color='g')
+    plt.plot( r2cluster[0] , r2cluster[1] , 'x', color='c')
+    plt.plot(rx1pathSingleEpoch, ry1pathSingleEpoch, 'o', color='r') 
+    plt.plot(rx2pathSingleEpoch, ry2pathSingleEpoch, 'o', color='b') 
+    plt.plot([rx1, rx2], [ry1, ry2], 'o', color='y') 
+    plt.legend(["r1's cluster", "r2's cluster", "r1's path first passage", "r2's path first passage", "centers of clusters"])
     plt.xlim(-8, 8)
     plt.ylim(-8, 8)
     plt.show()
@@ -230,6 +246,6 @@ index2 = np.random.randint(0, n - 1)
 rx2 = x[index2]
 ry2 = y[index2]
 
-# pp1_3(rx1, ry1, rx2, ry2, x, y, 1e-5, 10)
-# pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, 0.1, 10)
-pp7(30, n, x, y, alpha, 100)
+pp1_3(rx1, ry1, rx2, ry2, x, y, alpha, 10)
+pp4_6(rx1, ry1, rx2, ry2, a, b, x, y, alpha, 10)
+# pp7(30, n, x, y, alpha, 100)
