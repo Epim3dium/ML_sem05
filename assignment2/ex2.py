@@ -104,4 +104,4 @@ def ex23():
     plt.show()
 
 ex1(30)
-# ex23()
+ex23()

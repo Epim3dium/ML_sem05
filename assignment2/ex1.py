@@ -48,7 +48,7 @@ def trainUntilConvergence(alpha, full_inputs, expected_outputs):
 
 def ex456():
     epochs = 20
-    alpha = 10e-3
+    alpha = 1e-3
     weights = [(random.random() / 1.5) for _ in range(3)]
     errors_recorded = [[] for _ in range(len(expected_outputs))]
     weights_recorded = [[] for _ in range(len(weights))]
@@ -248,7 +248,7 @@ def ex10(num_runs):
     print("recall: ", sum(recall) / len(recall))
     print("precision: ", sum(precision) / len(precision))
     print("F1: ", sum(F1) / len(F1))
-# ex456()
-ex789()
+ex456()
+# ex789()
 # ex10(30)
 

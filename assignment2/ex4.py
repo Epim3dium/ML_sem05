@@ -78,7 +78,6 @@ print("Entropy of full dataset:", entropy_full)
 print("Entropy of Low subset:", entropy_low)
 print("Entropy of Medium subset:", entropy_medium)
 print("Entropy of High subset:", entropy_high)
-print("Information gain from splitting on first column:", gain_S_a)
 
 
 # In[15]:
@@ -153,16 +152,6 @@ y = y.squeeze()
 
 # Konwersja kolumny `y` na format binarny: 1 dla Iris-setosa, 0 dla pozostałych klas
 y_binary = y.map(lambda x: 1 if x == 'Iris-setosa' else 0)
-
-# Dyskretyzacja danych
-def discretize_data(X, n_bins=3):
-    X_discretized = pd.DataFrame()
-    
-    for i in range(X.shape[1]):
-        # Użycie pd.qcut do dyskretyzacji na podstawie percentyli
-        X_discretized[i] = pd.qcut(X.iloc[:, i], q=n_bins, labels=['low', 'medium', 'high'])
-    
-    return X_discretized
 
 # Dyskretyzacja danych
 X_discretized = discretize_data(X)
@@ -265,25 +254,25 @@ sample = X_discretized.iloc[0]
 print("Predykcja dla próbki:", classify(decision_tree, sample))
 
 
-# In[22]:
-
-
-import matplotlib.pyplot as plt
-from sklearn.tree import plot_tree
-
-plt.figure(figsize=(12, 8))
-plot_tree(clf, feature_names=list(X_encoded.columns), class_names=['Not Iris-setosa', 'Iris-setosa'], filled=True)
-plt.show()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+# # In[22]:
+#
+#
+# import matplotlib.pyplot as plt
+# from sklearn.tree import plot_tree
+#
+# plt.figure(figsize=(12, 8))
+# plot_tree(clf, feature_names=list(X_encoded.columns), class_names=['Not Iris-setosa', 'Iris-setosa'], filled=True)
+# plt.show()
+#
+#
+# # In[ ]:
+#
+#
+#
+#
+#
+# # In[ ]:
+#
+#
+#
+#
