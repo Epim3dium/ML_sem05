@@ -1,61 +1,81 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[33]:
+# In[3]:
 
-# Importuj potrzebne biblioteki
-import numpy as np
+
 import pandas as pd
-from ucimlrepo import fetch_ucirepo 
+from ucimlrepo import fetch_ucirepo
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Przygotuj dane
+# Pobranie danych
 iris = fetch_ucirepo(id=53)
 X = iris.data.features
 y = iris.data.targets
-
-# Konwersja X do DataFrame
 X = pd.DataFrame(X, columns=iris.data.feature_names)
 
+
+# In[16]:
+
+
+# Importy
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Funkcja dyskretyzująca dane
 def discretize_data(X):
     X_discretized = pd.DataFrame()
     
     for i in range(X.shape[1]):
-        # Użycie percentyli do ustalenia granic
-        bins = np.percentile(X.iloc[:, i], [0, 33.3, 66.6, 100])
-        labels = ['low', 'medium', 'high']
-        X_discretized[i] = pd.cut(X.iloc[:, i], bins=bins, labels=labels, include_lowest=True)
+        bins = pd.qcut(X.iloc[:, i], q=3, labels=['low', 'medium', 'high'])
+        X_discretized[X.columns[i]] = bins
     
     return X_discretized
 
-
-# Dyskretyzuj dane
+# Dyskretyzacja danych
 X_discretized = discretize_data(X)
 
 # Podział na zbiór treningowy i testowy
-X_train, X_test, y_train, y_test = train_test_split(X_discretized, y, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_discretized, y.to_numpy().flatten(), test_size=0.3, random_state=42)
 
-# Implementacja Naive Bayes
+# Resetowanie indeksów po podziale
+X_train.reset_index(drop=True, inplace=True)
+X_test.reset_index(drop=True, inplace=True)
+y_train = pd.Series(y_train).reset_index(drop=True)
+y_test = pd.Series(y_test).reset_index(drop=True)
+
+# Implementacja klasyfikatora Naive Bayes
 class NaiveBayes:
     def fit(self, X, y):
-        self.classes = np.unique(y)  # Unikalne klasy
-        self.class_prob = {cls: 0 for cls in self.classes}  # Prawdopodobieństwo klas
-        self.feature_prob = {cls: {} for cls in self.classes}  # Prawdopodobieństwo cech dla każdej klasy
+        # Upewnienie się, że y jest jednowymiarowe
+        y = pd.Series(y)
+        
+        # Inicjalizacja klas i ich prawdopodobieństw
+        self.classes = y.unique()
+        self.class_prob = {}
+        self.feature_prob = {cls: {} for cls in self.classes}
 
-        # Obliczanie prawdopodobieństw
         total_samples = len(y)
         
         for cls in self.classes:
-            cls_samples = X[y == cls]
-            self.class_prob[cls] = len(cls_samples) / total_samples  # P(Class)
+            # Uzyskanie próbek dla danej klasy z X_train
+            cls_samples = X[y == cls].reset_index(drop=True)  # Używamy reset_index, aby upewnić się, że indeksy są zgodne
+            self.class_prob[cls] = len(cls_samples) / total_samples
             
             for feature in X.columns:
-                # P(Xi | Class)
-                feature_values = cls_samples[feature].value_counts(normalize=True)
-                self.feature_prob[cls][feature] = feature_values.to_dict()
+                feature_counts = cls_samples[feature].value_counts(normalize=True)
+                self.feature_prob[cls][feature] = feature_counts.to_dict()
+                
+                for value in ['low', 'medium', 'high']:
+                    if value not in self.feature_prob[cls][feature]:
+                        self.feature_prob[cls][feature][value] = 1e-6
 
     def predict(self, X):
         predictions = []
@@ -64,24 +84,23 @@ class NaiveBayes:
             posteriors = {}
 
             for cls in self.classes:
-                # Oblicz P(Class | X)
                 prior = self.class_prob[cls]
-                likelihood = 1
+                likelihood = prior
                 
                 for feature in X.columns:
                     feature_value = row[feature]
-                    # Wartość prawdopodobieństwa dla cechy
-                    likelihood *= self.feature_prob[cls].get(feature_value, 0)
+                    likelihood *= self.feature_prob[cls][feature].get(feature_value, 1e-6)
                     
-                posteriors[cls] = prior * likelihood
+                posteriors[cls] = likelihood
             
-            # Klasa z najwyższym prawdopodobieństwem
             predictions.append(max(posteriors, key=posteriors.get))
         
         return predictions
 
 # Tworzenie i trenowanie modelu Naive Bayes
 nb_model = NaiveBayes()
+
+# Trenowanie modelu
 nb_model.fit(X_train, y_train)
 
 # Przewidywanie
@@ -98,20 +117,20 @@ print(class_report)
 
 # Wizualizacja macierzy pomyłek
 plt.figure(figsize=(8, 6))
-sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(y), yticklabels=np.unique(y))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(y_train), yticklabels=np.unique(y_train))
 plt.ylabel('Actual')
 plt.xlabel('Predicted')
 plt.title('Confusion Matrix')
 plt.show()
 
 
-# In[34]:
+# In[17]:
 
 
 print(conf_matrix)
 
 
-# In[35]:
+# In[18]:
 
 
 print("Rozkład klas w zbiorze treningowym:")
@@ -121,24 +140,14 @@ print("Rozkład klas w zbiorze testowym:")
 print(y_test.value_counts())
 
 
-# In[38]:
+# In[19]:
 
 
 print(X)
 
 
-# In[39]:
+# In[21]:
 
-
-import pandas as pd
-from ucimlrepo import fetch_ucirepo 
-
-# Importuj zbiór danych
-iris = fetch_ucirepo(id=53)
-
-# Przygotuj dane
-X = iris.data.features 
-y = iris.data.targets 
 
 # Konwertuj dane na DataFrame
 df = pd.DataFrame(X, columns=iris.data.feature_names)
