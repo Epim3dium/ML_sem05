@@ -3,10 +3,6 @@
 
 # In[33]:
 
-
-# Zainstaluj paczkę ucimlrepo (jeśli nie jest zainstalowana)
-get_ipython().system('pip install ucimlrepo')
-
 # Importuj potrzebne biblioteki
 import numpy as np
 import pandas as pd

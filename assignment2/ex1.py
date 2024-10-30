@@ -130,8 +130,8 @@ def ex789():
 
     full_inputs = [np.concatenate((c.T[i], np.array([1.0]))) for i in range(len(c.T))]
     expected_outputs = expected
-    print(expected_outputs)
-    print(full_inputs)
+    # print(expected_outputs)
+    # print(full_inputs)
     for _ in range(epochs):
         outputs = getOutputFor(full_inputs, weights)
         #3
@@ -170,6 +170,7 @@ def ex789():
     plt.plot(FPx, FPy, 'x', color='r')
     plt.plot(FNx, FNy, 'x', color='m')
     plt.axis('equal')
+    plt.legend(["A actual", "B actual", "A error", "B error"])
     plt.show()
     # error = [expected_outputs[i] - outputs[i] for i in range(len(outputs))]
     # print(error)
@@ -178,10 +179,14 @@ def ex789():
     print("actual")
     print("A", "\t", len(ATPx), "\t", len(FNx))
     print("B", "\t", len(FPx), "\t", len(BTNx))
-    tp = len(ATPx)
-    tn = len(BTNx)
-    fp = len(FPx)
-    fn = len(FNx)
+    # neat
+    from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+    conf_matrix = confusion_matrix(expected, outputs)
+    print(conf_matrix)
+    disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=['B', 'A'])  # reverse display labels
+    disp.plot()
+    # neat
+    plt.show()
 def ex10(num_runs):
     meanA = [ 3 , 3 ]
     covA = [ [ 1 , 0 ] , [ 0 , 1 ] ]
@@ -243,7 +248,7 @@ def ex10(num_runs):
     print("recall: ", sum(recall) / len(recall))
     print("precision: ", sum(precision) / len(precision))
     print("F1: ", sum(F1) / len(F1))
-ex456()
-# ex789()
+# ex456()
+ex789()
 # ex10(30)
 
