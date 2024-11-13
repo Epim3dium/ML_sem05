@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import random
 import time
 import seaborn as sns
@@ -42,7 +36,6 @@ def episode(n):
         if reward(state) > 0:
             return {"reward": reward(state) / i, "epochs": i}
     return {"reward": 0, "epochs": n}
-
 def ex1simulation(k):
     epochs = []
     rewards = []
@@ -54,24 +47,29 @@ def ex1simulation(k):
         epochs.append(e["epochs"])
         rewards.append(e["reward"])
         times.append(end - start)
+        
+    # Statystyki
     print("iter average:", sum(epochs) / len(epochs))
     print("iter stddev:", (sum((x - sum(epochs) / len(epochs)) ** 2 for x in epochs) / len(epochs)) ** 0.5)
     print("reward average:", sum(rewards) / len(rewards))
     print("reward stddev:", (sum((x - sum(rewards) / len(rewards)) ** 2 for x in rewards) / len(rewards)) ** 0.5)
     print("time stddev:", (sum((x - sum(times) / len(times)) ** 2 for x in times) / len(times)) ** 0.5)
+    
+    # Tworzenie wykresów
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
-
     axs[0].boxplot(rewards)
     axs[0].set_title('Reward per step')
-
+    
     axs[1].boxplot(epochs)
     axs[1].set_title('Number of iterations')
-
+    
     axs[2].boxplot(times)
     axs[2].set_title('Time elapsed')
-
+    
     plt.tight_layout()
+    plt.subplots_adjust(top=0.85)  # Dodanie miejsca na tytuły
     plt.show()
+
 
 Q = [[0] * len(ACTIONS) for _ in range(STATES)]
 
@@ -133,10 +131,9 @@ def ex2Single(a, y, n, episodeFunc):
         pathfind_time.append(end - start)
         pathfind_iters.append(result["epochs"])
         pathfind_rewards.append(result["reward"])
-
-    plt.plot(pathfind_iters, marker='o', linestyle='-')
-    plt.show()
     return {"times": pathfind_time, "epochs": pathfind_iters, "rewards": pathfind_rewards}
+
+
 
 # ZMIANA: Dodano `ex2Greedy`, aby testować różne wartości `greed` i rysować wyniki
 def ex2Greedy(a, y, n, k, greed_values):  
@@ -144,15 +141,17 @@ def ex2Greedy(a, y, n, k, greed_values):
     iters = []
     rewards = []
     for greed in greed_values:
+        resetQ()
         for _ in range(k):
+            resetQ()
             e = ex2Single(a, y, n, lambda a, y, n, start: episodeQGreedy(a, y, n, greed, start))
             times += e["times"]
             iters += e["epochs"]
             rewards += e["rewards"]
 
-    plt.plot(iters, marker='o', linestyle='-')
-    plt.title("Number of Iterations per Greed Level")
-    plt.show()
+        plt.plot(iters, marker='o', linestyle='-')
+        plt.title(f"Number of Iterations per {greed} Greed Level")
+        plt.show()
 
     return {"times": times, "epochs": iters, "rewards": rewards}
 
@@ -167,7 +166,7 @@ def episodeQGreedyVarying(a, y, n, start=0):
     return state
 
 # ZMIANA: Wartości `greed_values` dla różnych eksperymentów
-greed_values = [0.2, 0.5, 0.9]
+greed_values = [0.3, 0.5, 0.9]
 results = ex2Greedy(0.7, 0.99, 20000, 1, greed_values)
 
 # ZMIANA: Test dla stopniowo rosnącego `greed`
@@ -178,10 +177,3 @@ data = [[maxQ(i + ii * SIZE) for i in range(SIZE)] for ii in range(SIZE)]
 sns.heatmap(data, annot=True, cmap='viridis')
 plt.title('Heatmap from 2D Array')
 plt.show()
-
-
-# In[ ]:
-
-
-
-
